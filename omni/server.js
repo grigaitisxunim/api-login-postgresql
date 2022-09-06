@@ -14,7 +14,6 @@ mongoose.connect(
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useNewUrlParser: true,
-    //useFindAndModify: false,
   },
   function (err) {
     if (err) {
