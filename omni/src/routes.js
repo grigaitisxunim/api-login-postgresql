@@ -1,11 +1,13 @@
 const express = require("express");
 const routes = express.Router();
-const usuario = require("./controllers/usuarios.controller");
+const Usuario = require("./controllers/usuarios.controller");
 
-routes.get("/api/usuarios.details/:_id", usuario.details);
-routes.get("/", usuario.index);
-routes.post("/api/usuarios", usuario.create);
-routes.get("/api/usuarios", usuario.index);
-routes.delete("/api/usuarios/:_id", usuario.delete);
-routes.put("/api/usuarios", usuario.update);
+routes.get("/api/usuarios.details/:_id", Usuario.details);
+routes.get("/", Usuario.index);
+routes.post("/api/usuarios", Usuario.create);
+routes.get("/api/usuarios", Usuario.index);
+routes.delete("/api/usuarios/:_id", Usuario.delete);
+routes.put("/api/usuarios", Usuario.update);
+routes.post("/api/usuarios/login", Usuario.login);
+
 module.exports = routes;
