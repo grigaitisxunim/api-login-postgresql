@@ -26,7 +26,7 @@ echo "Docker Compose successfully installed!"
 sudo mkdir /montd
 cd /montd
 git clone https://lucas.fernandes:montdata.42X@git.montdata.com/montdata/omni/back/api-users
-cd requests-trudesk
+cd api-users
 docker-compose up -d
 # Show message about successfully install
 echo "Everything done, have a nice day!"
