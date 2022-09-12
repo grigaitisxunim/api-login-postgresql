@@ -25,7 +25,7 @@ echo "Docker Compose successfully installed!"
 # echo "Node.js successfully installed!"
 sudo mkdir /montd
 cd /montd
-git clone https://lucas.fernandes:montdata.42X@git.montdata.com/montdata/omni/back/requests-trudesk
+git clone https://lucas.fernandes:montdata.42X@git.montdata.com/montdata/omni/back/api-users
 cd requests-trudesk
 docker-compose up -d
 # Show message about successfully install
