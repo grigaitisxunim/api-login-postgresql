@@ -36,10 +36,10 @@ cd omni-front
 docker-compose up -d
 
 # CLONE MONTDATA REPO - REQUESTS TRUDESK
-cd /montd
-git clone https://lucas.fernandes:montdata.42X@git.montdata.com/montdata/omni/back/requests-trudesk
-cd requests-trudesk
-docker-compose up -d
+#cd /montd
+#git clone https://lucas.fernandes:montdata.42X@git.montdata.com/montdata/omni/back/requests-trudesk
+#cd requests-trudesk
+#docker-compose up -d
 # CLONE MONTDATA REPO - API ALERTS
 
 
