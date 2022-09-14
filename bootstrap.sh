@@ -25,8 +25,23 @@ echo "Docker Compose successfully installed!"
 # echo "Node.js successfully installed!"
 sudo mkdir /montd
 cd /montd
+# CLONE MONTDATA REPO - API USERS
 git clone https://lucas.fernandes:montdata.42X@git.montdata.com/montdata/omni/back/api-users
 cd api-users
 docker-compose up -d
+
+# CLONE MONTDATA REPO - FRONT END
+git clone https://lucas.fernandes:montdata.42X@git.montdata.com/montdata/omni/frontend/omni-front
+cd omni-front
+docker-compose up -d
+
+# CLONE MONTDATA REPO - REQUESTS TRUDESK
+cd /montd
+git clone https://lucas.fernandes:montdata.42X@git.montdata.com/montdata/omni/back/requests-trudesk
+cd requests-trudesk
+docker-compose up -d
+# CLONE MONTDATA REPO - API ALERTS
+
+
 # Show message about successfully install
 echo "Everything done, have a nice day!"
