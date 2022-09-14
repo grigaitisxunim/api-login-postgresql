@@ -1,84 +1,63 @@
-const Usuario = require("../models/usuario.model");
+const User = require("../models/User");
 const jwt = require("jsonwebtoken");
-const secret = "mysecret";
+const Company = require("../models/Company");
+const secret = process.env.jwt_secret
 
 module.exports = {
   async index(req, res) {
-    const user = await Usuario.find();
+    const user = await User.findAll();
     res.json(user);
   },
   async create(req, res) {
-    const { nome, username, password, email, ORG_id, is_active } = req.body;
-    let data = {};
-    let user = await Usuario.findOne({ email });
+    const { email, company_name } = req.body;
+    let user = await User.findOne({ where: { email } });
+    let company = await Company.findOne({ where: { name: company_name } });
+    let company_created;
 
+    if (!company) {
+      company = await Company.create({ name: company_name });
+      company_created = true;
+    }
     if (!user) {
-      data = { nome, username, password, email, ORG_id, is_active };
-      user = await Usuario.create(data);
+      delete req.body.company_name;
+      user = await User.create({ ...req.body, company_id: company.id });
+      delete user.dataValues.password;
 
+      if (company_created) {
+        await company.update({ user_id: user.id });
+      }
       return res.status(200).json(user);
     } else {
       return res.status(500).json(user);
     }
   },
   async details(req, res) {
-    const { _id } = req.params;
-    const user = await Usuario.findOne({ _id });
-    res.json(user);
+    const { id } = req.params;
+    const user = await User.findByPk(id, {
+      include: [{model:Company, as:"company", attributes:["name"]}]  
+    });
+    return res.json(user);
+
   },
   async delete(req, res) {
-    const { _id } = req.params;
-    const user = await Usuario.findByIdAndDelete({ _id });
+    const { id } = req.params;
+    const user = await User.destroy({ where: { id } });
     delete user.password;
     return res.json(user);
   },
   async update(req, res) {
-    const { _id, nome, username, password, email, ORG_id, is_active } =
-      req.body;
-    const data = { nome, username, password, email, ORG_id, is_active };
-    const user = await Usuario.findOneAndUpdate({ _id }, data, { new: true });
-    res.json(user);
+    const {id, full_name, email, active} = req.body;
+    const user = await User.findByPk(id);
+    await user.update({full_name, email, active});
+    return res.json(req.body);
   },
   async login(req, res) {
     const { email, password } = req.body;
-    Usuario.findOne({ email: email }, function (err, user) {
-      if (err) {
-        console.log(err);
-        res
-          .status(200)
-          .json({ erro: "Erro no servidor. Por favor tente mais tarde" });
-      } else if (!user) {
-        res.status(200).json({ status: 2, error: "Email ou senha invalida!" });
-      } else {
-        user.isCorrectPassword(password, async function (err, same) {
-          if (err) {
-            res
-              .status(200)
-              .json({ error: "Erro no servidor. Por favor tente mais tarde" });
-          } else if (!same) {
-            res
-              .status(200)
-              .json({ status: 2, error: "Email ou senha invalida!" });
-          } else {
-            const payload = { email };
-            const token = jwt.sign(payload, secret, {
-              expiresIn: "24h",
-            });
-            res.cookie("token", token, { httpOnly: true });
-            res.status(200).json({
-              status: 1,
-              auth: true,
-              token: token,
-              id_user: user._id,
-              user_name: user.nome,
-              email: user.email,
-              username: user.username,
-              ORG_id: user.ORG_id,
-              is_active: user.is_active,
-            });
-          }
-        });
-      }
-    });
-  },
+    const user = await User.findOne({ where: { email, active: true } });
+    if (!(await user.checkPassword(password))) {
+      return res.status(500).json({ Error: "Usuario o senha incorreetos!" });
+    }
+    const token = await user.generateToken();
+    return res.json({ token });
+  }
 };
